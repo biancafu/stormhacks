@@ -12,7 +12,11 @@ const HomeScreen = ({navigation}) => {
         <Button
         onPress={() => navigation.navigate('Test', {hello:"world2"})}
         title="Test"
-        />      
+        />  
+        <Button
+        onPress={() => navigation.navigate('Test2', {hello:"world3"})}
+        title="Test2"
+        />          
         </View></SafeAreaView>
 }
 
