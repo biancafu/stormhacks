@@ -1,6 +1,7 @@
 import { Camera, CameraType } from 'expo-camera';
 import { useState, useRef } from 'react';
 import { Button, StyleSheet, Text, TouchableOpacity, SafeAreaView, Image, SafeAreaSafeAreaView } from 'react-native';
+// import { VisionClient } from '@google-cloud/vision';
 
 export default function CameraComponent() {
   const [type, setType] = useState(CameraType.back);
@@ -33,10 +34,10 @@ export default function CameraComponent() {
   const captureImage = async() => {
     if (cameraRef.current) {
       try {
-        const photo = await cameraRef.current.takePictureAsync();
-        setCapturedImageUri(photo.uri);
+        const image = await cameraRef.current.takePictureAsync();
+        setCapturedImageUri(image.uri);
         // call the function to process the scanned image
-        processCapturedImage(photo.uri);
+        processCapturedImage(image.uri);
       } catch (error) {
         console.log('Error capturing image:', error);
       }
@@ -44,15 +45,84 @@ export default function CameraComponent() {
   };
 
   // handle the captured image and send to CloudVision
+  // const processCapturedImage = async (imageUri) => {
+  //   try {
+  //     // Call your text recognition API here and pass the imageUri
+  //     // Make a request to the Google Cloud Vision API for text detection
+  //     const [result] = await VisionClient.textDetection(imageUri);
+  //     const textAnnotations = result.textAnnotations;
+  //     // Extract the text from the response and use it as needed
+  //     const extractedText = textAnnotations ? textAnnotations[0].description : '';
+  //     // Update your app's state with the extracted text
+  //     console.log('Extracted Text:', extractedText);
+  //   } catch (error) {
+  //     console.log('Error processing image:', error);
+  //   }
+  // };
+
   const processCapturedImage = async (imageUri) => {
+    console.log('imageUri', imageUri);
     try {
-      // Call your text recognition API here and pass the imageUri
+      const apiKey = 'AIzaSyD_6js-OuAyKeyLI50BgYH227Oui8niVoM'; // Replace with your Google Cloud Vision API key
+      const apiUrl = `https://vision.googleapis.com/v1/images:annotate?key=${apiKey}`;
+  
+      const base64Image = await convertImageToBase64(imageUri);
+      const requestBody = {
+        requests: [
+          {
+            image: {
+              content: base64Image,
+            },
+            features: [
+              {
+                type: 'TEXT_DETECTION',
+              },
+            ],
+          },
+        ],
+      };
+  
+      console.log('requestBody', requestBody);
+
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestBody),
+      });
+
+      console.log('response: ', response);
+  
+      const data = await response.json();
+      console.log('data', data);
+  
       // Extract the text from the response and use it as needed
-      // Update your app's state with the extracted text
+      const extractedText = data.responses[0].textAnnotations[0].description;
+      console.log('Extracted Text:', extractedText);
     } catch (error) {
       console.log('Error processing image:', error);
     }
   };
+  
+  const convertImageToBase64 = async (imageUri) => {
+    const response = await fetch(imageUri);
+    const blob = await response.blob();
+    const base64String = await convertBlobToBase64(blob);
+    return base64String;
+  };
+  
+  const convertBlobToBase64 = (blob) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onerror = reject;
+      reader.onload = () => {
+        resolve(reader.result);
+      };
+      reader.readAsDataURL(blob);
+    });
+  };
+  
   
 
   return (
