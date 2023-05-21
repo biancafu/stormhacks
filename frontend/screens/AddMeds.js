@@ -39,7 +39,7 @@ const AddMeds = () => {
 
       {selectedTime && (
         <View>
-          <Text>Selected Time: {selectedTime.toLocaleTimeString()}</Text>
+          <Text>{selectedTime.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</Text>
           <Button title="Save Time" onPress={handleSaveTime} />
         </View>
       )}

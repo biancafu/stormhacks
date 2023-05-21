@@ -8,6 +8,7 @@ const Test2 = () => {
   const [selectedDays, setSelectedDays] = useState([]);
   const [frequency, setFrequency] = useState([]);
   const [currentScreen, setCurrentScreen] = useState(1);
+  const [number, setNumber] = useState('');
 
   const handleNextScreen = () => {
     setCurrentScreen(currentScreen + 1);
@@ -32,7 +33,7 @@ const Test2 = () => {
       const data = { name, week: selectedDays, frequency };
       await AsyncStorage.setItem('formData', JSON.stringify(data));
       console.log(data)
-
+      //navigate somewhere
       // Clear form data
       setName('');
       setSelectedDays('');
@@ -44,6 +45,13 @@ const Test2 = () => {
     } catch (error) {
       console.log('Error saving data:', error);
     }
+  };
+
+
+  const handleNumberChange = (value) => {
+    // Remove any non-numeric characters from the input value
+    const numericValue = value.replace(/[^0-9]/g, '');
+    setNumber(numericValue);
   };
 
   const renderScreen = () => {
@@ -81,8 +89,12 @@ const Test2 = () => {
         return (
           <View>
             <Text>How many times per day:</Text>
-            <TimeSetter
-            />
+            <TextInput
+            value={number}
+            onChangeText={handleNumberChange}
+            keyboardType="numeric"
+            placeholder="Enter a number"
+          />
             <Button title="Previous" onPress={handlePreviousScreen} />
             <Button title="Save" onPress={handleSaveData} />
           </View>
