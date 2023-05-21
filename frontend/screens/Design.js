@@ -30,8 +30,7 @@ const Design = () => {
             <Text className="font-bold text-xl">
               Grandma
             </Text>
-          </View>
-          Menu  
+          </View> 
           {/* Icon size={35} color="#00CCBB" /> */}
         </View>
 
