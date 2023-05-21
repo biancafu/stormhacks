@@ -54,6 +54,8 @@ const Test2 = () => {
     setNumber(numericValue);
   };
 
+  const numbers = Array.from({ length: number }, (_, index) => index + 1);
+
   const renderScreen = () => {
     switch (currentScreen) {
       case 1:
@@ -94,7 +96,15 @@ const Test2 = () => {
             onChangeText={handleNumberChange}
             keyboardType="numeric"
             placeholder="Enter a number"
-          />
+            />
+            <Button title="Previous" onPress={handlePreviousScreen} />
+            <Button title="Next" onPress={handleNextScreen} />
+          </View>
+        );
+      case 4:
+        return (
+          <View>
+            <TimeSetter />
             <Button title="Previous" onPress={handlePreviousScreen} />
             <Button title="Save" onPress={handleSaveData} />
           </View>
