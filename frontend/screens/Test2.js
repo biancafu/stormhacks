@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, Button, TouchableOpacity, StyleSheet } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import TimeSetter from "../components/TimeSetter"
+import DateTimePicker from '@react-native-community/datetimepicker';
 
-const Test2 = () => {
+
+const Test2 = ({navigation}) => {
   const [name, setName] = useState('');
   const [selectedDays, setSelectedDays] = useState([]);
   const [frequency, setFrequency] = useState([]);
@@ -33,6 +35,7 @@ const Test2 = () => {
       const data = { name, week: selectedDays, frequency };
       await AsyncStorage.setItem('formData', JSON.stringify(data));
       console.log(data)
+      navigation.popToTop();
       //navigate somewhere
       // Clear form data
       setName('');
@@ -47,14 +50,32 @@ const Test2 = () => {
     }
   };
 
+  const [selectedTime, setSelectedTime] = useState(null);
+  const [showPicker, setShowPicker] = useState(false);
+
+  const handleTimeChange = (event, time) => {
+    setShowPicker(false);
+    if (time !== undefined) {
+      setSelectedTime(time);
+    }
+  };
+
+  const handleSetTime = () => {
+    setShowPicker(true);
+  };
+
+  const handleSaveTime = () => {
+    // Handle saving the selectedTime to local storage or perform other actions
+    console.log(selectedTime);
+    // ...
+  };
+
 
   const handleNumberChange = (value) => {
     // Remove any non-numeric characters from the input value
     const numericValue = value.replace(/[^0-9]/g, '');
     setNumber(numericValue);
   };
-
-  const numbers = Array.from({ length: number }, (_, index) => index + 1);
 
   const renderScreen = () => {
     switch (currentScreen) {
@@ -103,8 +124,31 @@ const Test2 = () => {
         );
       case 4:
         return (
+           <View style={{ flex: 1, justifyContent: 'row', paddingHorizontal: 20 }}>
+      <Button title="Set Time" onPress={handleSetTime} />
+
+      {showPicker && (
+        <DateTimePicker
+          value={selectedTime || new Date()}
+          mode="time"
+          is24Hour={true}
+          display="spinner"
+          onChange={handleTimeChange}
+        />
+      )}
+
+      {selectedTime && (
+        <View>
+          <Text>{selectedTime.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</Text>
+          <Button title="Save Time" onPress={handleNextScreen} />
+        </View>
+      )}
+        </View>
+      );
+      case 5:
+        return(
           <View>
-            <TimeSetter />
+            <Text>Summary</Text>
             <Button title="Previous" onPress={handlePreviousScreen} />
             <Button title="Save" onPress={handleSaveData} />
           </View>
