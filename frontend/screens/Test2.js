@@ -150,7 +150,7 @@ const Test2 = ({navigation}) => {
           <View>
             <Text>Summary</Text>
             <Button title="Previous" onPress={handlePreviousScreen} />
-            <Button title="Save" onPress={handleSaveData} />
+            <Button title="Add Medicine" onPress={handleSaveData} />
           </View>
         );
       default:
